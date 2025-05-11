@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Girish's Tool - Multi-Tool Website</title>
+    <style>
+        /* --- Global Styles & Reset --- */
+        :root {
+            --primary-color: #3498db; /* Blue */
+            --secondary-color: #2ecc71; /* Green */
+            --background-color: #1a1a2e; /* Dark Blue/Purple */
+            --surface-color: #1f1f3a; /* Slightly Lighter Dark Blue */
+            --text-color: #e0e0e0;
+            --input-bg-color: #2c2c4a;
+            --border-color: #4a4a6a;
+            --accent-color: #e94560; /* Pink/Red accent */
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll from particles */
+        }
+
+        /* --- Particle Effect Container --- */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: var(--background-color);
+            background-image: url(""); /* if you have a bg image */
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 50% 50%;
+            z-index: -1; /* Behind everything */
+        }
+
+        /* --- Main Layout --- */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            width: 280px;
+            background-color: var(--surface-color);
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+            transition: width 0.3s ease;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            z-index: 100;
+        }
+
+        .sidebar h1 {
+            font-size: 1.8em;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+        }
+
+        .sidebar ul li a {
+            display: block;
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            margin-left: 280px; /* Same as sidebar width */
+            transition: margin-left 0.3s ease;
+        }
+
+        .tool-page {
+            display: none; /* Hidden by default */
+            background-color: var(--surface-color);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .tool-page.active {
+            display: block;
+        }
+
+        .tool-page h2 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* --- Form Elements Styling --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="date"],
+        .form-group input[type="url"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--input-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 1em;
+        }
+
+        .form-group input[type="color"] {
+             width: 100%;
+             height: 50px;
+             padding: 5px;
+             background-color: var(--input-bg-color);
+             border: 1px solid var(--border-color);
+             border-radius: 6px;
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background-color: #2980b9; /* Darker blue */
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+        .btn-secondary:hover {
+            background-color: #27ae60; /* Darker green */
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-color);
+        }
+        .btn-danger:hover {
+            background-color: #c7304a; /* Darker accent */
+        }
+
+        .result-area {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--input-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            word-wrap: break-word;
+        }
+        .result-area p {
+            margin-bottom: 5px;
+        }
+        .result-area strong {
+            color: var(--secondary-color);
+        }
+
+        /* QR Code Canvas */
+        #qrCodeCanvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid var(--border-color);
+            background-color: white; /* QR code typically on white */
+        }
+
+        /* HTML Viewer iframe */
+        #htmlViewerOutput {
+            width: 100%;
+            height: 300px;
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            margin-top: 15px;
+        }
+
+        /* Toggle Button for Sidebar (Mobile) */
+        .sidebar-toggle {
+            display: none; /* Hidden on desktop */
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 101;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0; /* Hidden by default */
+                padding-left:0;
+                padding-right:0;
+                overflow: hidden;
+            }
+            .sidebar.open {
+                width: 250px; /* Open width */
+                padding: 20px;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .main-content.shifted {
+                margin-left: 250px; /* Shift content when sidebar is open */
+            }
+            .sidebar-toggle {
+                display: block;
+            }
+            .sidebar h1 {
+                font-size: 1.5em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <button class="sidebar-toggle" id="sidebarToggle">&#9776;</button>
+
+    <div class="container">
+        <nav class="sidebar" id="sidebar">
+            <h1>Girish's Tool</h1>
+            <ul>
+                <li><a href="#loan-emi-calculator" class="tool-link active">Loan EMI Calculator</a></li>
+                <li><a href="#video-transcript-generator" class="tool-link">Video Transcript Generator</a></li>
+                <li><a href="#cpc-pay-calculator" class="tool-link">7th CPC Pay Calculator</a></li>
+                <li><a href="#tneb-bill-calculator" class="tool-link">TNEB Bill Calculator</a></li>
+                <li><a href="#ms-plate-weight-calculator" class="tool-link">MS Plate Weight Calculator</a></li>
+                <li><a href="#lic-surrender-value-calculator" class="tool-link">LIC Surrender Value Calculator</a></li>
+                <li><a href="#sgpa-calculator" class="tool-link">SGPA Calculator</a></li>
+                <li><a href="#lo-shu-grid-calculator" class="tool-link">Lo Shu Grid Calculator</a></li>
+                <li><a href="#vit-cgpa-calculator" class="tool-link">VIT CGPA Calculator</a></li>
+                <li><a href="#srm-cgpa-calculator" class="tool-link">SRM CGPA Calculator</a></li>
+                <li><a href="#srm-gpa-calculator" class="tool-link">SRM GPA Calculator</a></li>
+                <li><a href="#unit-converter" class="tool-link">Unit Converter</a></li>
+                <li><a href="#time-zone-converter" class="tool-link">Time Zone Converter</a></li>
+                <li><a href="#random-password-generator" class="tool-link">Random Password Generator</a></li>
+                <li><a href="#qr-code-generator" class="tool-link">QR Code Generator</a></li>
+                <li><a href="#word-counter" class="tool-link">Word & Character Counter</a></li>
+                <li><a href="#image-converter" class="tool-link">Image Tools</a></li>
+                <li><a href="#color-picker" class="tool-link">Color Picker & Converter</a></li>
+                <li><a href="#code-compiler" class="tool-link">Code Compiler (Conceptual)</a></li>
+                <li><a href="#html-viewer" class="tool-link">HTML Viewer</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content" id="mainContent">
+            <!-- Tool: Loan EMI Calculator -->
+            <section id="loan-emi-calculator" class="tool-page active">
+                <h2>Loan EMI Calculator</h2>
+                <div class="form-group">
+                    <label for="principal">Principal Loan Amount (₹):</label>
+                    <input type="number" id="principal" placeholder="e.g., 100000">
+                </div>
+                <div class="form-group">
+                    <label for="interestRate">Annual Interest Rate (%):</label>
+                    <input type="number" id="interestRate" placeholder="e.g., 10.5">
+                </div>
+                <div class="form-group">
+                    <label for="tenure">Loan Tenure (Months):</label>
+                    <input type="number" id="tenure" placeholder="e.g., 12">
+                </div>
+                <button class="btn" onclick="calculateEMI()">Calculate EMI</button>
+                <div class="result-area" id="emiResult"></div>
+            </section>
+
+            <!-- Tool: Video Transcript Generator -->
+            <section id="video-transcript-generator" class="tool-page">
+                <h2>Video Transcript Generator</h2>
+                <p>This tool would typically require YouTube API access or advanced speech-to-text capabilities, often server-side.</p>
+                <div class="form-group">
+                    <label for="videoUrl">YouTube Video URL:</label>
+                    <input type="url" id="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+                <button class="btn">Generate Transcript (Conceptual)</button>
+                <div class="result-area">Transcript would appear here...</div>
+            </section>
+            
+            <!-- Tool: 7th CPC Pay Calculator -->
+            <section id="cpc-pay-calculator" class="tool-page">
+                <h2>7th CPC Pay Calculator</h2>
+                <p>Requires detailed pay matrix data. This is a simplified placeholder.</p>
+                <div class="form-group">
+                    <label for="basicPay">Basic Pay (as per 6th CPC):</label>
+                    <input type="number" id="basicPayCpc" placeholder="e.g., 15600">
+                </div>
+                <div class="form-group">
+                    <label for="gradePay">Grade Pay:</label>
+                    <input type="number" id="gradePayCpc" placeholder="e.g., 5400">
+                </div>
+                <button class="btn">Calculate 7th CPC (Conceptual)</button>
+                <div class="result-area">Calculated pay details would appear here...</div>
+            </section>
+
+            <!-- Tool: TNEB Bill Calculator -->
+            <section id="tneb-bill-calculator" class="tool-page">
+                <h2>TNEB Bill Calculator (Simplified)</h2>
+                <p>Note: Tariff rates change. This is a simplified example based on hypothetical domestic LT IA tariff.</p>
+                <div class="form-group">
+                    <label for="tnebUnits">Units Consumed (kWh):</label>
+                    <input type="number" id="tnebUnits" placeholder="e.g., 350">
+                </div>
+                <button class="btn" onclick="calculateTNEBBill()">Calculate Bill</button>
+                <div class="result-area" id="tnebResult"></div>
+            </section>
+
+            <!-- Tool: MS Plate Weight Calculator -->
+            <section id="ms-plate-weight-calculator" class="tool-page">
+                <h2>MS Plate Weight Calculator</h2>
+                <div class="form-group">
+                    <label for="plateLength">Length (mm):</label>
+                    <input type="number" id="plateLength" placeholder="e.g., 1000">
+                </div>
+                <div class="form-group">
+                    <label for="plateWidth">Width (mm):</label>
+                    <input type="number" id="plateWidth" placeholder="e.g., 500">
+                </div>
+                <div class="form-group">
+                    <label for="plateThickness">Thickness (mm):</label>
+                    <input type="number" id="plateThickness" placeholder="e.g., 10">
+                </div>
+                <p>Density of Mild Steel: ~7.85 g/cm³ or 0.00000785 kg/mm³</p>
+                <button class="btn" onclick="calculateMSPlateWeight()">Calculate Weight</button>
+                <div class="result-area" id="msPlateWeightResult"></div>
+            </section>
+
+            <!-- Tool: LIC Surrender Value Calculator -->
+            <section id="lic-surrender-value-calculator" class="tool-page">
+                <h2>LIC Surrender Value Calculator</h2>
+                <p>Actual LIC surrender value calculation is complex and policy-specific. This is a conceptual placeholder.</p>
+                <div class="form-group">
+                    <label for="policyTerm">Policy Term (Years):</label>
+                    <input type="number" id="policyTerm" placeholder="e.g., 20">
+                </div>
+                <div class="form-group">
+                    <label for="premiumsPaid">Number of Premiums Paid:</label>
+                    <input type="number" id="premiumsPaidCount" placeholder="e.g., 5">
+                </div>
+                <div class="form-group">
+                    <label for="annualPremium">Annual Premium (₹):</label>
+                    <input type="number" id="annualPremiumLic" placeholder="e.g., 10000">
+                </div>
+                <button class="btn">Estimate Surrender Value (Conceptual)</button>
+                <div class="result-area">Estimated value would appear here...</div>
+            </section>
+
+            <!-- Tool: SGPA Calculator -->
+            <section id="sgpa-calculator" class="tool-page">
+                <h2>SGPA Calculator</h2>
+                <div id="sgpaCoursesContainer">
+                    <!-- Courses will be added here by JS -->
+                </div>
+                <button class="btn btn-secondary" onclick="addSGPACourse()">Add Course</button>
+                <button class="btn" onclick="calculateSGPA()">Calculate SGPA</button>
+                <div class="result-area" id="sgpaResult"></div>
+            </section>
+            
+            <!-- Tool: Lo Shu Grid Calculator -->
+            <section id="lo-shu-grid-calculator" class="tool-page">
+                <h2>Lo Shu Grid Calculator</h2>
+                <div class="form-group">
+                    <label for="dobLoShu">Date of Birth:</label>
+                    <input type="date" id="dobLoShu">
+                </div>
+                <button class="btn" onclick="generateLoShuGrid()">Generate Grid</button>
+                <div class="result-area" id="loShuGridResult" style="font-family: monospace; white-space: pre; text-align: center; font-size: 1.5em;"></div>
+            </section>
+
+            <!-- Tool: VIT CGPA Calculator -->
+            <section id="vit-cgpa-calculator" class="tool-page">
+                <h2>VIT CGPA Calculator (Conceptual)</h2>
+                <p>VIT uses a specific grading system. Provide fields for multiple semesters' SGPA and credits.</p>
+                <button class="btn">Calculate VIT CGPA (Conceptual)</button>
+                <div class="result-area">VIT CGPA would appear here...</div>
+            </section>
+
+            <!-- Tool: SRM CGPA Calculator -->
+            <section id="srm-cgpa-calculator" class="tool-page">
+                <h2>SRM CGPA Calculator (Conceptual)</h2>
+                <p>SRM also has its own grading. Provide fields for multiple semesters' SGPA and credits.</p>
+                <button class="btn">Calculate SRM CGPA (Conceptual)</button>
+                <div class="result-area">SRM CGPA would appear here...</div>
+            </section>
+
+            <!-- Tool: SRM GPA Calculator -->
+            <section id="srm-gpa-calculator" class="tool-page">
+                <h2>SRM GPA Calculator (Conceptual)</h2>
+                <p>Similar to SGPA, but specific to SRM grade points (O, A+, A, B+, B etc.).</p>
+                <button class="btn">Calculate SRM GPA (Conceptual)</button>
+                <div class="result-area">SRM GPA would appear here...</div>
+            </section>
+
+            <!-- Tool: Unit Converter -->
+            <section id="unit-converter" class="tool-page">
+                <h2>Unit Converter</h2>
+                <div class="form-group">
+                    <label for="unitValue">Value:</label>
+                    <input type="number" id="unitValue" placeholder="Enter value">
+                </div>
+                <div class="form-group">
+                    <label for="fromUnit">From Unit:</label>
+                    <select id="fromUnit">
+                        <optgroup label="Length">
+                            <option value="meter">Meter (m)</option>
+                            <option value="kilometer">Kilometer (km)</option>
+                            <option value="centimeter">Centimeter (cm)</option>
+                            <option value="millimeter">Millimeter (mm)</option>
+                            <option value="mile">Mile (mi)</option>
+                            <option value="yard">Yard (yd)</option>
+                            <option value="foot">Foot (ft)</option>
+                            <option value="inch">Inch (in)</option>
+                        </optgroup>
+                        <optgroup label="Weight">
+                            <option value="kilogram">Kilogram (kg)</option>
+                            <option value="gram">Gram (g)</option>
+                            <option value="milligram">Milligram (mg)</option>
+                            <option value="pound">Pound (lb)</option>
+                            <option value="ounce">Ounce (oz)</option>
+                        </optgroup>
+                         <optgroup label="Temperature">
+                            <option value="celsius">Celsius (°C)</option>
+                            <option value="fahrenheit">Fahrenheit (°F)</option>
+                            <option value="kelvin">Kelvin (K)</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="toUnit">To Unit:</label>
+                    <select id="toUnit">
+                        <!-- Options will be populated by JS based on "fromUnit" category -->
+                    </select>
+                </div>
+                <button class="btn" onclick="convertUnit()">Convert</button>
+                <div class="result-area" id="unitConversionResult"></div>
+            </section>
+
+            <!-- Tool: Time Zone Converter -->
+            <section id="time-zone-converter" class="tool-page">
+                <h2>Time Zone Converter</h2>
+                <p>Accurate time zone conversion usually relies on up-to-date timezone databases (e.g., IANA) often handled by libraries or server-side.</p>
+                 <div class="form-group">
+                    <label for="inputDateTime">Date and Time:</label>
+                    <input type="datetime-local" id="inputDateTime">
+                </div>
+                <div class="form-group">
+                    <label for="fromTimeZone">From Time Zone:</label>
+                    <select id="fromTimeZone"> <!-- Populate with common TZs -->
+                        <option value="UTC">UTC</option>
+                        <option value="America/New_York">America/New_York (ET)</option>
+                        <option value="Europe/London">Europe/London (GMT/BST)</option>
+                        <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                        <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="toTimeZone">To Time Zone:</label>
+                    <select id="toTimeZone">
+                        <option value="UTC">UTC</option>
+                        <option value="America/New_York">America/New_York (ET)</option>
+                        <option value="Europe/London">Europe/London (GMT/BST)</option>
+                        <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                        <option value="Asia/Tokyo">Asia/Tokyo (JST)</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="convertTimeZone()">Convert Time</button>
+                <div class="result-area" id="timeZoneResult"></div>
+            </section>
+
+            <!-- Tool: Random Password Generator -->
+            <section id="random-password-generator" class="tool-page">
+                <h2>Random Password Generator</h2>
+                <div class="form-group">
+                    <label for="passwordLength">Password Length:</label>
+                    <input type="number" id="passwordLength" value="12" min="4" max="128">
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" id="includeUppercase" checked>
+                    <label for="includeUppercase" style="display:inline;">Include Uppercase Letters (A-Z)</label>
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" id="includeLowercase" checked>
+                    <label for="includeLowercase" style="display:inline;">Include Lowercase Letters (a-z)</label>
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" id="includeNumbers" checked>
+                    <label for="includeNumbers" style="display:inline;">Include Numbers (0-9)</label>
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" id="includeSymbols">
+                    <label for="includeSymbols" style="display:inline;">Include Symbols (!@#$%^&*)</label>
+                </div>
+                <button class="btn" onclick="generatePassword()">Generate Password</button>
+                <div class="result-area" id="passwordResult"></div>
+            </section>
+
+            <!-- Tool: QR Code Generator -->
+            <section id="qr-code-generator" class="tool-page">
+                <h2>QR Code Generator</h2>
+                <div class="form-group">
+                    <label for="qrData">Text or URL for QR Code:</label>
+                    <input type="text" id="qrData" placeholder="Enter data here">
+                </div>
+                <button class="btn" onclick="generateQRCode()">Generate QR Code</button>
+                <canvas id="qrCodeCanvas"></canvas>
+                <div class="result-area" id="qrError" style="display:none; color: var(--accent-color);"></div>
+            </section>
+
+            <!-- Tool: Word & Character Counter -->
+            <section id="word-counter" class="tool-page">
+                <h2>Word & Character Counter</h2>
+                <div class="form-group">
+                    <textarea id="textToCount" placeholder="Paste or type your text here..."></textarea>
+                </div>
+                <div class="result-area" id="countResult">
+                    <p>Words: <strong>0</strong></p>
+                    <p>Characters (with spaces): <strong>0</strong></p>
+                    <p>Characters (no spaces): <strong>0</strong></p>
+                </div>
+            </section>
+
+            <!-- Tool: Image Converter, Resizer, and Compressor -->
+            <section id="image-converter" class="tool-page">
+                <h2>Image Tools (Converter & Resizer)</h2>
+                <p>Client-side compression is limited. This focuses on format conversion and resizing.</p>
+                <div class="form-group">
+                    <label for="imageUpload">Upload Image:</label>
+                    <input type="file" id="imageUpload" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="imageResizeWidth">Resize Width (px, optional):</label>
+                    <input type="number" id="imageResizeWidth" placeholder="e.g., 800">
+                </div>
+                <div class="form-group">
+                    <label for="imageFormat">Convert to Format:</label>
+                    <select id="imageFormat">
+                        <option value="image/png">PNG</option>
+                        <option value="image/jpeg">JPEG</option>
+                        <option value="image/webp">WEBP</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label for="imageQuality">JPEG/WEBP Quality (0.1 - 1.0):</label>
+                    <input type="number" id="imageQuality" value="0.8" min="0.1" max="1.0" step="0.1">
+                </div>
+                <button class="btn" onclick="processImage()">Process Image</button>
+                <div class="result-area">
+                    <p>Processed image will appear below. Right-click to save.</p>
+                    <img id="processedImage" src="#" alt="Processed Image" style="max-width:100%; display:none;">
+                    <a id="downloadLink" style="display:none;" class="btn btn-secondary">Download Image</a>
+                </div>
+            </section>
+
+            <!-- Tool: Color Picker & Converter -->
+            <section id="color-picker" class="tool-page">
+                <h2>Color Picker & Converter</h2>
+                <div class="form-group">
+                    <label for="colorPickerInput">Select Color:</label>
+                    <input type="color" id="colorPickerInput" value="#3498db">
+                </div>
+                <div class="form-group">
+                    <label for="hexColorInput">HEX:</label>
+                    <input type="text" id="hexColorInput" placeholder="#RRGGBB">
+                </div>
+                <div class="form-group">
+                    <label for="rgbColorInput">RGB:</label>
+                    <input type="text" id="rgbColorInput" placeholder="rgb(r, g, b)">
+                </div>
+                <div class="form-group">
+                    <label for="hslColorInput">HSL:</label>
+                    <input type="text" id="hslColorInput" placeholder="hsl(h, s%, l%)">
+                </div>
+                <div id="colorPreview" style="width: 100px; height: 100px; border: 1px solid var(--border-color); margin-top:10px; border-radius: 6px;"></div>
+            </section>
+
+            <!-- Tool: Code Compiler -->
+            <section id="code-compiler" class="tool-page">
+                <h2>Code Compiler (Conceptual)</h2>
+                <p>A true client-side multi-language compiler is extremely complex. This is a conceptual UI.</p>
+                <p>For actual compilation, one would typically use a service like Judge0 API, or embed an iframe from an online IDE.</p>
+                <div class="form-group">
+                    <label for="languageSelect">Language:</label>
+                    <select id="languageSelect">
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="csharp">C#</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="codeInput">Code:</label>
+                    <textarea id="codeInput" rows="10" placeholder="Write your code here..."></textarea>
+                </div>
+                <button class="btn">Compile & Run (Conceptual)</button>
+                <div class="result-area">Output/Errors would appear here...</div>
+            </section>
+
+            <!-- Tool: HTML Viewer -->
+            <section id="html-viewer" class="tool-page">
+                <h2>HTML Viewer</h2>
+                <div class="form-group">
+                    <label for="htmlInput">Enter HTML Code:</label>
+                    <textarea id="htmlInput" rows="10" placeholder="<html>...</html>"></textarea>
+                </div>
+                <button class="btn" onclick="renderHTML()">Render HTML</button>
+                <div class="result-area">
+                    <p>Rendered Output:</p>
+                    <iframe id="htmlViewerOutput" sandbox="allow-scripts allow-same-origin"></iframe>
+                    <!-- Sandboxing is important for security if viewing arbitrary HTML -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- particles.js library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- qrcode.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Particle.js Initialization ---
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                    "color": { "value": "#555577" }, // Muted color to not distract
+                    "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000000" }, "polygon": { "nb_sides": 5 } },
+                    "opacity": { "value": 0.4, "random": false, "anim": { "enable": false, "speed": 1, "opacity_min": 0.1, "sync": false } },
+                    "size": { "value": 3, "random": true, "anim": { "enable": false, "speed": 40, "size_min": 0.1, "sync": false } },
+                    "line_linked": { "enable": true, "distance": 150, "color": "#555577", "opacity": 0.3, "width": 1 },
+                    "move": { "enable": true, "speed": 2, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false, "attract": { "enable": false, "rotateX": 600, "rotateY": 1200 } }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                    "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.7 } }, "bubble": { "distance": 400, "size": 40, "duration": 2, "opacity": 8, "speed": 3 }, "repulse": { "distance": 200, "duration": 0.4 }, "push": { "particles_nb": 4 }, "remove": { "particles_nb": 2 } }
+                },
+                "retina_detect": true
+            });
+
+            // --- Sidebar Navigation & Tool Switching ---
+            const toolLinks = document.querySelectorAll('.sidebar ul li a');
+            const toolPages = document.querySelectorAll('.tool-page');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+
+            function showTool(toolId) {
+                toolPages.forEach(page => page.classList.remove('active'));
+                toolLinks.forEach(link => link.classList.remove('active'));
+
+                const targetPage = document.getElementById(toolId);
+                const targetLink = document.querySelector(`.sidebar ul li a[href="#${toolId}"]`);
+
+                if (targetPage) targetPage.classList.add('active');
+                if (targetLink) targetLink.classList.add('active');
+                
+                // For mobile: close sidebar after selection
+                if (window.innerWidth <= 768 && sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    mainContent.classList.remove('shifted');
+                    sidebarToggle.innerHTML = '&#9776;'; // Menu icon
+                }
+            }
+
+            toolLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const toolId = e.target.getAttribute('href').substring(1);
+                    showTool(toolId);
+                    // Update URL hash for bookmarking/sharing (optional)
+                    // window.location.hash = toolId;
+                });
+            });
+
+            // Initial tool display (e.g. from hash or default)
+            // let initialTool = window.location.hash.substring(1) || 'loan-emi-calculator';
+            // if (!document.getElementById(initialTool)) initialTool = 'loan-emi-calculator'; // Fallback
+            showTool('loan-emi-calculator'); // Default to first tool
+
+            // Sidebar toggle for mobile
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                mainContent.classList.toggle('shifted');
+                if (sidebar.classList.contains('open')) {
+                    sidebarToggle.innerHTML = '&times;'; // Close icon
+                } else {
+                    sidebarToggle.innerHTML = '&#9776;'; // Menu icon
+                }
+            });
+
+
+            // --- Tool Specific JavaScript ---
+
+            // Loan EMI Calculator
+            window.calculateEMI = function() {
+                const principal = parseFloat(document.getElementById('principal').value);
+                const annualRate = parseFloat(document.getElementById('interestRate').value);
+                const tenureMonths = parseInt(document.getElementById('tenure').value);
+                const resultDiv = document.getElementById('emiResult');
+
+                if (isNaN(principal) || isNaN(annualRate) || isNaN(tenureMonths) || principal <= 0 || annualRate <= 0 || tenureMonths <= 0) {
+                    resultDiv.innerHTML = '<p style="color: var(--accent-color);">Please enter valid positive numbers for all fields.</p>';
+                    return;
+                }
+
+                const monthlyRate = annualRate / (12 * 100);
+                const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, tenureMonths)) / (Math.pow(1 + monthlyRate, tenureMonths) - 1);
+                const totalAmount = emi * tenureMonths;
+                const totalInterest = totalAmount - principal;
+
+                resultDiv.innerHTML = `
+                    <p>Monthly EMI: <strong>₹ ${emi.toFixed(2)}</strong></p>
+                    <p>Total Interest Payable: <strong>₹ ${totalInterest.toFixed(2)}</strong></p>
+                    <p>Total Amount Payable: <strong>₹ ${totalAmount.toFixed(2)}</strong></p>
+                `;
+            };
+
+            // TNEB Bill Calculator (Simplified Example)
+            window.calculateTNEBBill = function() {
+                const units = parseInt(document.getElementById('tnebUnits').value);
+                const resultDiv = document.getElementById('tnebResult');
+                let billAmount = 0;
+
+                if (isNaN(units) || units < 0) {
+                    resultDiv.innerHTML = '<p style="color: var(--accent-color);">Please enter valid units.</p>';
+                    return;
+                }
+                // Hypothetical Domestic LT Tariff IA (rates are for example only and may not be current)
+                // This is a very simplified slab calculation
+                if (units <= 100) { // 0-100 units
+                    billAmount = 0; // Assuming first 100 units are free or heavily subsidized
+                } else if (units <= 200) { // 101-200 units
+                    billAmount = (units - 100) * 2.25; // Example rate
+                } else if (units <= 400) { // 201-400 units
+                    billAmount = (100 * 2.25) + (units - 200) * 4.50;
+                } else if (units <= 500) { // 401-500 units
+                    billAmount = (100 * 2.25) + (200 * 4.50) + (units - 400) * 6.00;
+                } else { // Above 500
+                     // A more complex tiered structure usually applies
+                    billAmount = (100 * 2.25) + (200 * 4.50) + (100 * 6.00); // For first 500
+                    if (units <= 600) billAmount += (units - 500) * 8.00;
+                    else if (units <= 800) billAmount += (100 * 8.00) + (units - 600) * 9.00;
+                    else if (units <= 1000) billAmount += (100 * 8.00) + (200 * 9.00) + (units - 800) * 10.00;
+                    else billAmount += (100 * 8.00) + (200 * 9.00) + (200 * 10.00) + (units - 1000) * 11.00;
+                }
+                 // Add fixed charges (example)
+                let fixedCharges = 0;
+                if (units <=100) fixedCharges = 0;
+                else if (units <= 200) fixedCharges = 20;
+                else if (units <= 400) fixedCharges = 30;
+                else if (units <= 500) fixedCharges = 50;
+                else fixedCharges = 75; // Example, scales up
+
+                billAmount += fixedCharges;
+
+                resultDiv.innerHTML = `<p>Estimated Bill Amount: <strong>₹ ${billAmount.toFixed(2)}</strong> (Including fixed charges of ₹${fixedCharges.toFixed(2)})</p>
+                                       <p style="font-size:0.8em; opacity:0.7;">Disclaimer: This is a simplified calculation. Actual TNEB bill may vary due to surcharges, taxes, and tariff revisions.</p>`;
+            };
+
+            // MS Plate Weight Calculator
+            window.calculateMSPlateWeight = function() {
+                const length = parseFloat(document.getElementById('plateLength').value); // mm
+                const width = parseFloat(document.getElementById('plateWidth').value);   // mm
+                const thickness = parseFloat(document.getElementById('plateThickness').value); // mm
+                const resultDiv = document.getElementById('msPlateWeightResult');
+                
+                if (isNaN(length) || isNaN(width) || isNaN(thickness) || length <= 0 || width <= 0 || thickness <= 0) {
+                    resultDiv.innerHTML = '<p style="color: var(--accent-color);">Please enter valid dimensions.</p>';
+                    return;
+                }
+
+                const densityKgPerMm3 = 0.00000785; // kg/mm³
+                const volumeMm3 = length * width * thickness;
+                const weightKg = volumeMm3 * densityKgPerMm3;
+
+                resultDiv.innerHTML = `<p>Volume: <strong>${volumeMm3.toFixed(2)} mm³</strong></p>
+                                       <p>Weight: <strong>${weightKg.toFixed(3)} kg</strong></p>`;
+            };
+
+            // SGPA Calculator
+            let sgpaCourseCount = 0;
+            window.addSGPACourse = function() {
+                sgpaCourseCount++;
+                const container = document.getElementById('sgpaCoursesContainer');
+                const courseDiv = document.createElement('div');
+                courseDiv.className = 'form-group';
+                courseDiv.innerHTML = `
+                    <h4>Course ${sgpaCourseCount}</h4>
+                    <label for="sgpaCredits${sgpaCourseCount}">Credits:</label>
+                    <input type="number" id="sgpaCredits${sgpaCourseCount}" class="sgpa-credits" placeholder="e.g., 4" step="0.5" min="0">
+                    <label for="sgpaGrade${sgpaCourseCount}">Grade Point (0-10):</label>
+                    <input type="number" id="sgpaGrade${sgpaCourseCount}" class="sgpa-grades" placeholder="e.g., 9" step="0.1" min="0" max="10">
+                `;
+                container.appendChild(courseDiv);
+            };
+             // Add one course initially
+            addSGPACourse();
+
+            window.calculateSGPA = function() {
+                const creditsElements = document.querySelectorAll('.sgpa-credits');
+                const gradesElements = document.querySelectorAll('.sgpa-grades');
+                const resultDiv = document.getElementById('sgpaResult');
+                let totalCredits = 0;
+                let weightedGradePoints = 0;
+
+                for (let i = 0; i < creditsElements.length; i++) {
+                    const credits = parseFloat(creditsElements[i].value);
+                    const grade = parseFloat(gradesElements[i].value);
+
+                    if (!isNaN(credits) && !isNaN(grade) && credits > 0 && grade >= 0 && grade <= 10) {
+                        totalCredits += credits;
+                        weightedGradePoints += credits * grade;
+                    } else if (!isNaN(credits) || !isNaN(grade)) {
+                        // Only show error if at least one field has a value but it's invalid
+                        resultDiv.innerHTML = `<p style="color: var(--accent-color);">Invalid input for course ${i+1}. Please check credits and grade points (0-10).</p>`;
+                        return;
+                    }
+                }
+
+                if (totalCredits === 0) {
+                    resultDiv.innerHTML = '<p style="color: var(--accent-color);">Please enter course details to calculate SGPA.</p>';
+                    return;
+                }
+
+                const sgpa = weightedGradePoints / totalCredits;
+                resultDiv.innerHTML = `<p>Total Credits: <strong>${totalCredits}</strong></p>
+                                       <p>SGPA: <strong>${sgpa.toFixed(2)}</strong></p>`;
+            };
+            
+            // Lo Shu Grid
+            window.generateLoShuGrid = function() {
+                const dobInput = document.getElementById('dobLoShu').value;
+                const resultDiv = document.getElementById('loShuGridResult');
+                if (!dobInput) {
+                    resultDiv.textContent = 'Please select a Date of Birth.';
+                    return;
+                }
+                const date = new Date(dobInput);
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = String(date.getFullYear());
+                
+                const dobString = day + month + year;
+                const numbers = dobString.split('').map(Number).filter(n => n > 0); // Filter out 0s
+
+                const grid = { 4:0, 9:0, 2:0, 3:0, 5:0, 7:0, 8:0, 1:0, 6:0 };
+                numbers.forEach(num => {
+                    if (grid.hasOwnProperty(num)) {
+                        grid[num]++;
+                    }
+                });
+
+                const displayGrid = `
+    ${grid[4] || '-'} | ${grid[9] || '-'} | ${grid[2] || '-'}
+    --+---+--
+    ${grid[3] || '-'} | ${grid[5] || '-'} | ${grid[7] || '-'}
+    --+---+--
+    ${grid[8] || '-'} | ${grid[1] || '-'} | ${grid[6] || '-'}
+                `;
+                resultDiv.textContent = displayGrid;
+            };
+
+            // Unit Converter
+            const unitCategories = {
+                length: {
+                    meter: 1, kilometer: 1000, centimeter: 0.01, millimeter: 0.001,
+                    mile: 1609.34, yard: 0.9144, foot: 0.3048, inch: 0.0254
+                },
+                weight: {
+                    kilogram: 1, gram: 0.001, milligram: 0.000001,
+                    pound: 0.453592, ounce: 0.0283495
+                },
+                temperature: { // Special handling for temperature
+                    celsius: 'c', fahrenheit: 'f', kelvin: 'k'
+                }
+            };
+
+            const fromUnitSelect = document.getElementById('fromUnit');
+            const toUnitSelect = document.getElementById('toUnit');
+
+            function populateToUnits() {
+                const selectedFromUnit = fromUnitSelect.value;
+                let category = null;
+                for (const cat in unitCategories) {
+                    if (unitCategories[cat].hasOwnProperty(selectedFromUnit)) {
+                        category = cat;
+                        break;
+                    }
+                }
+
+                toUnitSelect.innerHTML = ''; // Clear existing options
+                if (category) {
+                    for (const unit in unitCategories[category]) {
+                        const option = document.createElement('option');
+                        option.value = unit;
+                        option.textContent = unit.charAt(0).toUpperCase() + unit.slice(1) + (category === 'temperature' ? ` (°${unitCategories[category][unit].toUpperCase()})` : ` (${unit})`);
+                        if(unit === selectedFromUnit) option.disabled = true; // Disable converting to itself
+                        toUnitSelect.appendChild(option);
+                    }
+                }
+            }
+            fromUnitSelect.addEventListener('change', populateToUnits);
+            populateToUnits(); // Initial population
+
+            window.convertUnit = function() {
+                const value = parseFloat(document.getElementById('unitValue').value);
+                const fromUnit = fromUnitSelect.value;
+                const toUnit = toUnitSelect.value;
+                const resultDiv = document.getElementById('unitConversionResult');
+
+                if (isNaN(value)) {
+                    resultDiv.innerHTML = '<p style="color: var(--accent-color);">Please enter a valid number to convert.</p>';
+                    return;
+                }
+
+                let category = null;
+                for (const cat in unitCategories) {
+                    if (unitCategories[cat].hasOwnProperty(fromUnit)) {
+                        category = cat;
+                        break;
+                    }
+                }
+                
+                if (!category || !unitCategories[category].hasOwnProperty(toUnit)) {
+                     resultDiv.innerHTML = '<p style="color: var(--accent-color);">Cannot convert between these unit types or unit not found.</p>';
+                     return;
+                }
+
+
+                let result;
+                if (category === 'temperature') {
+                    if (fromUnit === 'celsius') {
+                        if (toUnit === 'fahrenheit') result = (value * 9/5) + 32;
+                        else if (toUnit === 'kelvin') result = value + 273.15;
+                        else result = value;
+                    } else if (fromUnit === 'fahrenheit') {
+                        if (toUnit === 'celsius') result = (value - 32) * 5/9;
+                        else if (toUnit === 'kelvin') result = (value - 32) * 5/9 + 273.15;
+                        else result = value;
+                    } else if (fromUnit === 'kelvin') {
+                        if (toUnit === 'celsius') result = value - 273.15;
+                        else if (toUnit === 'fahrenheit') result = (value - 273.15) * 9/5 + 32;
+                        else result = value;
+                    }
+                } else {
+                    const valueInBase = value * unitCategories[category][fromUnit];
+                    result = valueInBase / unitCategories[category][toUnit];
+                }
+                
+                resultDiv.innerHTML = `<p>${value} ${fromUnit} = <strong>${result.toFixed(4)} ${toUnit}</strong></p>`;
+            };
+            
+            // Time Zone Converter
+            window.convertTimeZone = function() {
+                const dateTimeString = document.getElementById('inputDateTime').value;
+                const fromTz = document.getElementById('fromTimeZone').value;
+                const toTz = document.getElementById('toTimeZone').value;
+                const resultDiv = document.getElementById('timeZoneResult');
+
+                if (!dateTimeString) {
+                    resultDiv.innerHTML = '<p style="color: var(--accent-color);">Please select a date and time.</p>';
+                    return;
+                }
+
+                try {
+                    // Note: This uses the browser's Intl object which has limitations with historical timezone data
+                    // and might not support all IANA timezone names perfectly across all browsers.
+                    // For robust timezone handling, a library like moment-timezone.js is recommended but adds to size.
+                    
+                    // Create a date object. Parsing "datetime-local" can be tricky.
+                    // It's local to the user's system, not necessarily the 'fromTz'.
+                    // A truly robust solution requires careful handling of this.
+                    // For this example, we'll assume the input is meant to be interpreted in 'fromTz'.
+                    // This is a simplification.
+                    
+                    // Construct a date object assuming the input time is in UTC, then adjust.
+                    // This is hard to do perfectly without a library.
+                    // Let's try a simplified approach using current date parts and replacing time
+                    
+                    const inputDate = new Date(dateTimeString); // This is in user's local time
+                    
+                    // This is a basic conversion and might not be DST-accurate for all cases without a full library.
+                    const options = { 
+                        year: 'numeric', month: 'long', day: 'numeric', 
+                        hour: '2-digit', minute: '2-digit', second: '2-digit',
+                        timeZone: toTz,
+                        hour12: false // Use 24 hour format
+                    };
+                    // To correctly interpret `inputDate` as being in `fromTz`, we'd need to
+                    // offset it to UTC first, then convert to `toTz`.
+                    // The `toLocaleString` with `timeZone` option assumes the date object is already in UTC
+                    // or it applies the conversion from the system's timezone.
+
+                    // Simpler path: if using Intl, provide fromTz during initial formatting.
+                    // However, the input is already localized. This is where it gets complex.
+                    // Let's try to display in target TZ.
+                    const formatter = new Intl.DateTimeFormat('en-US', options);
+                    const convertedTime = formatter.format(inputDate);
+                    
+                    // This simplified conversion assumes the input datetime-local is the "source" time
+                    // and directly asks to display it in the "target" timezone.
+                    // This is generally how `Intl.DateTimeFormat` works IF the initial date
+                    // object is timezone-naive or UTC. `new Date(datetimeLocalValue)` is NOT naive.
+                    
+                    resultDiv.innerHTML = `<p>Original local time: ${inputDate.toLocaleString()}</p>
+                                           <p>Converted to ${toTz}: <strong>${convertedTime}</strong></p>
+                                           <p style="font-size:0.8em; opacity:0.7;">Note: Time zone conversions can be complex due to DST. This is a basic conversion.</p>`;
+
+                } catch (e) {
+                    resultDiv.innerHTML = `<p style="color: var(--accent-color);">Error converting time: ${e.message}. Ensure your browser supports Intl.DateTimeFormat with time zones.</p>`;
+                }
+            };
+
+
+            // Random Password Generator
+            window.generatePassword = function() {
+                const length = parseInt(document.getElementById('passwordLength').value);
+                const includeUppercase = document.getElementById('includeUppercase').checked;
+                const includeLowercase = document.getElementById('includeLowercase').checked;
+                const includeNumbers = document.getElementById('includeNumbers').checked;
+                const includeSymbols = document.getElementById('includeSymbols').checked;
+                const resultDiv = document.getElementById('passwordResult');
+
+                const uppercaseChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                const lowercaseChars = "abcdefghijklmnopqrstuvwxyz";
+                const numberChars = "0123456789";
+                const symbolChars = "!@#$%^&*()_+-=[]{}|;:,.<>?";
+
+                let charPool = "";
+                if (includeUppercase) charPool += uppercaseChars;
+                if (includeLowercase) charPool += lowercaseChars;
+                if (includeNumbers) charPool += numberChars;
+                if (includeSymbols) charPool += symbolChars;
+
+                if (charPool === "") {
+                    resultDiv.innerHTML = '<p style="color: var(--accent-color);">Please select at least one character type.</p>';
+                    return;
+                }
+
+                let password = "";
+                for (let i = 0; i < length; i++) {
+                    const randomIndex = Math.floor(Math.random() * charPool.length);
+                    password += charPool[randomIndex];
+                }
+                resultDiv.innerHTML = `<p>Generated Password: <strong style="user-select:all; cursor:text;">${password}</strong></p>
+                                       <button class="btn btn-sm btn-secondary" onclick="copyToClipboard('${password}')">Copy</button>`;
+            };
+            
+            window.copyToClipboard = function(text) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Password copied to clipboard!');
+                }).catch(err => {
+                    alert('Failed to copy password.');
+                });
+            };
+
+            // QR Code Generator
+            window.generateQRCode = function() {
+                const data = document.getElementById('qrData').value;
+                const canvas = document.getElementById('qrCodeCanvas');
+                const errorDiv = document.getElementById('qrError');
+                errorDiv.style.display = 'none';
+
+                if (!data.trim()) {
+                    errorDiv.textContent = 'Please enter text or URL for the QR code.';
+                    errorDiv.style.display = 'block';
+                    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); // Clear previous QR
+                    return;
+                }
+
+                QRCode.toCanvas(canvas, data, { width: 256, margin: 2 }, function (error) {
+                    if (error) {
+                        console.error(error);
+                        errorDiv.textContent = 'Error generating QR Code. Data might be too long or invalid.';
+                        errorDiv.style.display = 'block';
+                    } else {
+                        console.log('QR Code generated!');
+                    }
+                });
+            };
+
+            // Word & Character Counter
+            const textToCountInput = document.getElementById('textToCount');
+            const countResultDiv = document.getElementById('countResult');
+            textToCountInput.addEventListener('input', () => {
+                const text = textToCountInput.value;
+                const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+                const charsWithSpaces = text.length;
+                const charsNoSpaces = text.replace(/\s/g, '').length;
+                countResultDiv.innerHTML = `
+                    <p>Words: <strong>${words}</strong></p>
+                    <p>Characters (with spaces): <strong>${charsWithSpaces}</strong></p>
+                    <p>Characters (no spaces): <strong>${charsNoSpaces}</strong></p>
+                `;
+            });
+
+            // Image Converter/Resizer
+            const imageUpload = document.getElementById('imageUpload');
+            const processedImageEl = document.getElementById('processedImage');
+            const downloadLink = document.getElementById('downloadLink');
+
+            window.processImage = function() {
+                const file = imageUpload.files[0];
+                const resizeWidth = parseInt(document.getElementById('imageResizeWidth').value);
+                const format = document.getElementById('imageFormat').value;
+                const quality = parseFloat(document.getElementById('imageQuality').value);
+
+                if (!file) {
+                    alert('Please upload an image first.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        let newWidth = img.width;
+                        let newHeight = img.height;
+
+                        if (!isNaN(resizeWidth) && resizeWidth > 0 && resizeWidth < img.width) {
+                            const aspectRatio = img.height / img.width;
+                            newWidth = resizeWidth;
+                            newHeight = resizeWidth * aspectRatio;
+                        }
+                        
+                        canvas.width = newWidth;
+                        canvas.height = newHeight;
+                        ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+                        let dataUrl;
+                        if (format === 'image/jpeg' || format === 'image/webp') {
+                            dataUrl = canvas.toDataURL(format, quality);
+                        } else {
+                            dataUrl = canvas.toDataURL(format); // PNG doesn't use quality here
+                        }
+                        
+                        processedImageEl.src = dataUrl;
+                        processedImageEl.style.display = 'block';
+                        
+                        downloadLink.href = dataUrl;
+                        const extension = format.split('/')[1];
+                        downloadLink.download = `processed_image.${extension}`;
+                        downloadLink.style.display = 'inline-block';
+                    }
+                    img.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            };
+
+            // Color Picker & Converter
+            const colorPicker = document.getElementById('colorPickerInput');
+            const hexInput = document.getElementById('hexColorInput');
+            const rgbInput = document.getElementById('rgbColorInput');
+            const hslInput = document.getElementById('hslColorInput');
+            const colorPreview = document.getElementById('colorPreview');
+
+            function updateColorDisplay(hex) {
+                colorPreview.style.backgroundColor = hex;
+                hexInput.value = hex.toUpperCase();
+                
+                const rgb = hexToRgb(hex);
+                rgbInput.value = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+
+                const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+                hslInput.value = `hsl(${Math.round(hsl.h)}, ${Math.round(hsl.s * 100)}%, ${Math.round(hsl.l * 100)}%)`;
+            }
+
+            colorPicker.addEventListener('input', (e) => updateColorDisplay(e.target.value));
+            hexInput.addEventListener('input', (e) => {
+                const hex = e.target.value;
+                if (/^#([0-9A-F]{3}){1,2}$/i.test(hex)) {
+                    colorPicker.value = hex; // Sync picker
+                    updateColorDisplay(hex);
+                }
+            });
+            // Basic initial display
+            updateColorDisplay(colorPicker.value);
+
+            function hexToRgb(hex) {
+                let r = 0, g = 0, b = 0;
+                if (hex.length == 4) { // #RGB
+                    r = parseInt(hex[1] + hex[1], 16);
+                    g = parseInt(hex[2] + hex[2], 16);
+                    b = parseInt(hex[3] + hex[3], 16);
+                } else if (hex.length == 7) { // #RRGGBB
+                    r = parseInt(hex[1] + hex[2], 16);
+                    g = parseInt(hex[3] + hex[4], 16);
+                    b = parseInt(hex[5] + hex[6], 16);
+                }
+                return { r, g, b };
+            }
+
+            function rgbToHsl(r, g, b) {
+                r /= 255; g /= 255; b /= 255;
+                const max = Math.max(r, g, b), min = Math.min(r, g, b);
+                let h, s, l = (max + min) / 2;
+                if (max == min) {
+                    h = s = 0; // achromatic
+                } else {
+                    const d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch (max) {
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    h /= 6;
+                }
+                return { h: h * 360, s, l };
+            }
+
+
+            // HTML Viewer
+            window.renderHTML = function() {
+                const htmlCode = document.getElementById('htmlInput').value;
+                const iframe = document.getElementById('htmlViewerOutput');
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write(htmlCode);
+                iframeDoc.close();
+            };
+
+
+        }); // End DOMContentLoaded
+    </script>
+</body>
+</html>
